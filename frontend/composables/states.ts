@@ -1,0 +1,1 @@
+export const useSelectedNavMenu = () => useState<number[]>('selectedNavMenu', () => [0])

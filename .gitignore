@@ -1,0 +1,14 @@
+# Nuxt dev/build outputs
+frontend/.output
+frontend/.nuxt
+
+# Node dependencies
+frontend/node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+__debug_bin*
