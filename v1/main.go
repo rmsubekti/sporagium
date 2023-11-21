@@ -16,10 +16,21 @@ func Setup(r *mux.Router) {
 		v1.HandleFunc("/login", h.Login).Methods("POST")
 	}
 
-	account := v1.PathPrefix("/account").Subrouter()
-	account.Use(middleware.JwtAuthMiddleware)
+	// account := v1.PathPrefix("/account").Subrouter()
+	// account.Use(middleware.JwtAuthMiddleware)
+	// {
+	// 	account.HandleFunc("", h.UserProfile).Methods("GET")
+	// }
+
+	user := v1.PathPrefix("/user").Subrouter()
+	user.Use(middleware.JwtAuthMiddleware)
 	{
-		account.HandleFunc("", h.UserProfile).Methods("GET")
+		user.HandleFunc("", h.UserProfile).Methods("GET")
+	}
+	oauth := v1.PathPrefix("/o").Subrouter()
+	oauth.Use(middleware.JwtOauthMiddleware)
+	{
+		oauth.HandleFunc("/userinfo", h.UserProfile).Methods("GET")
 	}
 
 	spora := v1.PathPrefix("/spora").Subrouter()

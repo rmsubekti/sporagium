@@ -2,16 +2,15 @@ package model
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 	"gorm.io/gorm/clause"
 )
 
 type Client struct {
-	ID      string         `gorm:"type:text;primaryKey" json:"id"`
-	SporaID uuid.UUID      `json:"spora_id"`
-	Secret  string         `gorm:"type:text" json:"secret"`
-	Domain  string         `gorm:"type:text" json:"domain"`
-	Data    datatypes.JSON `json:"data"`
+	ID      string     `gorm:"type:text;primaryKey" json:"id"`
+	SporaID uuid.UUID  `json:"spora_id"`
+	Secret  string     `gorm:"type:text" json:"secret"`
+	Domain  string     `gorm:"type:text" json:"domain"`
+	Data    ClientData `gorm:"type:jsonb" json:"data"`
 }
 
 type Clients []Client

@@ -22,3 +22,18 @@ func JwtAuthMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func JwtOauthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		principal := Principal{
+			Token: r.Header.Get("Authorization"),
+		}
+		if err := principal.ParseOauth(); err != nil {
+			dto.JSON(w, http.StatusUnauthorized, err.Error())
+			return
+		}
+		context.Set(r, "principal", principal)
+
+		next.ServeHTTP(w, r)
+	})
+}

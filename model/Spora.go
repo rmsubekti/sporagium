@@ -1,15 +1,13 @@
 package model
 
 import (
-	"errors"
-	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm/clause"
 )
 
-var rxUrl = regexp.MustCompile(`(?m)(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})? `)
+// var rxUrl = regexp.MustCompile(`(?m)(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})? `)
 
 type Spora struct {
 	ID            uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
@@ -27,14 +25,14 @@ func (Spora) TableName() string {
 	return "spora.spora"
 }
 
-func (s Spora) Validate() error {
+func (s *Spora) Validate() error {
 	if !strings.HasPrefix(s.CallbackURL, "http") {
 		s.CallbackURL = "https://" + s.CallbackURL
 	}
 
-	if !rxUrl.MatchString(s.CallbackURL) {
-		return errors.New("callback url is not valid url")
-	}
+	// if !rxUrl.MatchString(s.CallbackURL) {
+	// 	return errors.New("callback url is not valid url")
+	// }
 	return nil
 }
 

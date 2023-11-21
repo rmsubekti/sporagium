@@ -57,8 +57,14 @@ func (v V1Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	store.Set("J5E", principal.Token)
-	store.Set("U5E", account.ID)
+	store.Set("U5E", principal.ID)
 	store.Save()
+
+	if _, ok := store.Get("ReturnUri"); ok {
+		dto.JSON(w, http.StatusTemporaryRedirect, "/auth")
+		return
+	}
+
 	dto.JSON(w, http.StatusOK, principal)
 
 }

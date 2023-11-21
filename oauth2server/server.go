@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4/errors"
+	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/go-oauth2/oauth2/v4/manage"
 	"github.com/go-oauth2/oauth2/v4/server"
 	session "github.com/go-session/session/v3"
+	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4"
 	"github.com/rmsubekti/sporagium/database"
@@ -29,11 +31,11 @@ func Setup(r *mux.Router) {
 	adapter := pgx4adapter.NewConn(pgxConn)
 	tokenStore, _ := pg.NewTokenStore(adapter, pg.WithTokenStoreTableName(`token`), pg.WithTokenStoreGCInterval(time.Minute))
 	defer tokenStore.Close()
-	clientStore, _ := pg.NewClientStore(adapter, pg.WithClientStoreTableName(`'spora'.client`), pg.WithClientStoreInitTableDisabled())
+	clientStore, _ := pg.NewClientStore(adapter, pg.WithClientStoreTableName(`spora.secrets`), pg.WithClientStoreInitTableDisabled())
 
 	manager.MapTokenStorage(tokenStore)
 	manager.MapClientStorage(clientStore)
-
+	manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
 	srv := server.NewDefaultServer(manager)
 	srv.SetAllowGetAccessRequest(true)
 	srv.SetClientInfoHandler(server.ClientFormHandler)
@@ -47,6 +49,7 @@ func Setup(r *mux.Router) {
 		log.Println("Response Error:", re.Error.Error())
 	})
 
+	srv.SetUserAuthorizationHandler(userAuthorizeHandler)
 	oauth := r.PathPrefix("/o").Subrouter()
 	oauth.HandleFunc("/authorize", func(w http.ResponseWriter, r *http.Request) {
 		store, err := session.Start(r.Context(), w, r)
@@ -73,4 +76,54 @@ func Setup(r *mux.Router) {
 	oauth.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
 		srv.HandleTokenRequest(w, r)
 	})
+
+	oauth.HandleFunc("/auth", authHandler).Methods("GET")
+
+}
+func authHandler(w http.ResponseWriter, r *http.Request) {
+	store, err := session.Start(nil, w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if r.Form == nil {
+		r.ParseForm()
+	}
+	store.Set("ReturnUri", r.Form)
+	store.Save()
+
+	if _, ok := store.Get("U5E"); !ok {
+		w.Header().Set("Location", "/login")
+		w.WriteHeader(http.StatusFound)
+		return
+	}
+	w.Header().Set("Location", "/auth")
+	w.WriteHeader(http.StatusFound)
+}
+
+func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+	store, err := session.Start(r.Context(), w, r)
+	if err != nil {
+		return
+	}
+
+	uid, ok := store.Get("U5E")
+	if !ok {
+		if r.Form == nil {
+			r.ParseForm()
+		}
+
+		store.Set("ReturnUri", r.Form)
+		store.Save()
+
+		w.Header().Set("Location", "/login")
+		w.WriteHeader(http.StatusFound)
+		return
+	}
+
+	userID = uid.(string)
+	store.Delete("U5E")
+	store.Save()
+	return
 }

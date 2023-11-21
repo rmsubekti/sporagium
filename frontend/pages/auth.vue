@@ -3,8 +3,7 @@
         <title>Login</title>
     </Head>
     <NuxtLayout name="blank">
-        <a-form :model="formState" name="login" @finish="onFinish" @finishFailed="onFinishFailed">
-            <a-form-item placeholder="Username" name="email"
+            <!-- <a-form-item placeholder="Username" name="email"
                 :rules="[{ required: true, message: 'Please input your username or email!' }]">
                 <a-input v-model:value="formState.email">
                     <template #prefix>
@@ -29,30 +28,24 @@
                     </a-form-item>
                     <a class="login-form-forgot" href="">Forgot password</a>
                 </div>
-            </a-form-item>
+            </a-form-item> -->
 
-            <a-form-item>
-                <a-button type="primary" html-type="submit" class="bg-blue-700">
-                    Log in
-                </a-button>
-                Or
-                <NuxtLink to="/register">register now!</NuxtLink>
-            </a-form-item>
-        </a-form>
+            <a href="/o/authorize">Authorize</a>
+
     </NuxtLayout>
 </template>
 <script lang="ts" setup>
-interface FormState {
-    email: string;
-    password: string;
-    remember: boolean;
-}
+// interface FormState {
+//     email: string;
+//     password: string;
+//     remember: boolean;
+// }
 const config = useRuntimeConfig();
-const formState = reactive<FormState>({
-    email: '',
-    password: '',
-    remember: true,
-});
+// const formState = reactive<FormState>({
+//     email: '',
+//     password: '',
+//     remember: true,
+// });
 const onFinish = async (values: any) => {
     const { data, error } = await useFetch(`${config.public.apiBase}/login`, {
         onRequest({ request, options }) {
@@ -63,9 +56,7 @@ const onFinish = async (values: any) => {
             if (response.status === 200) {
                 localStorage.setItem('nuxt-cred', response._data.data.token);
                 navigateTo('/dashboard')
-            }else if(response.status === 307 )(
-                navigateTo(response._data.data)
-            )
+            }
         },
         onResponseError({ response }) {
             console.log(response?._data);
@@ -73,7 +64,7 @@ const onFinish = async (values: any) => {
     });
 };
 
-const onFinishFailed = (errorInfo: any) => {
+const auth = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
 };
 </script>

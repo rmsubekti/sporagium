@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/rmsubekti/sporagium/helper"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -71,4 +72,39 @@ func (p *Principal) Parse() error {
 	}
 
 	return fmt.Errorf("invalid token %s ", err.Error())
+}
+
+func (p *Principal) ParseOauth() (err error) {
+
+	if len(p.Token) < 1 {
+		return errors.New("no token provided")
+	}
+
+	token := strings.SplitN(p.Token, " ", 2)
+
+	if (len(token) < 2) || (token[0] != "Bearer") {
+		return errors.New("incorrect format authorization header")
+	}
+
+	key, err := jwt.ParseWithClaims(token[1], &generates.JWTAccessClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("parse error")
+		}
+		return []byte("00000000"), nil
+	})
+	if err != nil {
+		return
+	}
+
+	claim, ok := key.Claims.(*generates.JWTAccessClaims)
+	if !ok || !key.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	if !key.Valid && err != nil {
+		return err
+	}
+	p.ID = claim.Subject
+	p.ExpireDays = float32(claim.ExpiresAt)
+	return
 }
