@@ -7,12 +7,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/rmsubekti/sporagium/dto"
+	"github.com/rmsubekti/sporagium/helper"
 	"github.com/rmsubekti/sporagium/middleware"
-	"github.com/rmsubekti/sporagium/model"
+	"github.com/rmsubekti/sporagium/models"
+	"github.com/rmsubekti/sporagium/service"
 )
 
 func (v V1Handler) CreateSpora(w http.ResponseWriter, r *http.Request) {
-	var spora model.Spora
+	var spora models.Spora
 	user, err := v.getPrincipal(r)
 	if err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
@@ -23,7 +25,9 @@ func (v V1Handler) CreateSpora(w http.ResponseWriter, r *http.Request) {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if err := spora.Create(user.ID); err != nil {
+
+	sporaSrv := service.NewSporaService()
+	if err := sporaSrv.Create(&spora, user.ID); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -31,48 +35,43 @@ func (v V1Handler) CreateSpora(w http.ResponseWriter, r *http.Request) {
 }
 
 func (v V1Handler) ViewListSpora(w http.ResponseWriter, r *http.Request) {
-	var sporas model.Sporas
+	var paginator helper.Paginator
 	user, err := v.getPrincipal(r)
 	if err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	if err := sporas.GetAll(user.ID); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&paginator); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	dto.JSON(w, http.StatusOK, sporas)
+	sporaSrv := service.NewSporaService()
+	if err := sporaSrv.Paginate(&paginator, user.ID); err != nil {
+		dto.JSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	dto.JSON(w, http.StatusOK, paginator)
 }
 
-func (v V1Handler) CreateClientSecret(w http.ResponseWriter, r *http.Request) {
+func (v V1Handler) GenerateSecret(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	var spora model.Spora
-	var client model.Client
+	var spora models.Spora
 	var err error
 	var user middleware.Principal
 	if user, err = v.getPrincipal(r); err != nil {
 		dto.JSON(w, http.StatusUnauthorized, err.Error())
 		return
 	}
-
-	if err = spora.Get(id); err != nil {
-		dto.JSON(w, http.StatusInternalServerError, err)
+	if spora, err = service.NewSporaService().FirstByID(id); err != nil {
+		dto.JSON(w, http.StatusNotFound, err)
 		return
 	}
-
 	if spora.UserID != uuid.MustParse(user.ID) {
 		dto.JSON(w, http.StatusUnauthorized, "youre not the owner of this spora")
 	}
-
-	client.Domain = spora.CallbackURL
-	client.SporaID = spora.ID
-	client.Secret = uuid.NewString()
-	if err = client.Create(); err != nil {
-		dto.JSON(w, http.StatusInternalServerError, spora)
-		return
+	if err = service.NewSecretService().Generate(spora.ID); err != nil {
+		dto.JSON(w, http.StatusInternalServerError, err)
 	}
 	dto.JSON(w, http.StatusOK, "client secret created")
 }

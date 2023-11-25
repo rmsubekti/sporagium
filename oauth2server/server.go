@@ -81,7 +81,7 @@ func Setup(r *mux.Router) {
 
 }
 func authHandler(w http.ResponseWriter, r *http.Request) {
-	store, err := session.Start(nil, w, r)
+	store, err := session.Start(context.TODO(), w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -98,7 +98,8 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusFound)
 		return
 	}
-	w.Header().Set("Location", "/auth")
+	clientId := r.FormValue("client_id")
+	w.Header().Set("Location", "/auth?client_id="+clientId)
 	w.WriteHeader(http.StatusFound)
 }
 
@@ -123,7 +124,5 @@ func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string
 	}
 
 	userID = uid.(string)
-	store.Delete("U5E")
-	store.Save()
 	return
 }

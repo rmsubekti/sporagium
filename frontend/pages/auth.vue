@@ -29,7 +29,7 @@
                     <a class="login-form-forgot" href="">Forgot password</a>
                 </div>
             </a-form-item> -->
-
+{{ name }}
             <a href="/o/authorize">Authorize</a>
 
     </NuxtLayout>
@@ -67,5 +67,7 @@ const onFinish = async (values: any) => {
 const auth = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
 };
+let params = new URLSearchParams(document.location.search);
+let name = params.get("client_id");
 </script>
 <style scoped></style>

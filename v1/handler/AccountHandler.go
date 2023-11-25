@@ -6,35 +6,35 @@ import (
 
 	"github.com/rmsubekti/sporagium/dto"
 	"github.com/rmsubekti/sporagium/middleware"
-	"github.com/rmsubekti/sporagium/model"
+	"github.com/rmsubekti/sporagium/models"
+	"github.com/rmsubekti/sporagium/service"
 
 	session "github.com/go-session/session/v3"
 )
 
 func (v V1Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var (
-		register dto.Register
-		account  model.Account
+		user models.User
 	)
-
-	if err := json.NewDecoder(r.Body).Decode(&register); err != nil {
+	userSrv := service.NewUserService()
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if err := account.Set(register).Create(); err != nil {
+	if err := userSrv.Register(&user); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	register.Password = ""
-	dto.JSON(w, http.StatusOK, register)
+	user.Password = ""
+	dto.JSON(w, http.StatusOK, user)
 }
 
 func (v V1Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var (
-		login   dto.Login
-		account model.Account
+		login dto.Login
+		user  models.User
+		err   error
 	)
 	store, _ := session.Start(r.Context(), w, r)
 	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
@@ -42,16 +42,18 @@ func (v V1Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := account.Login(login.Email, login.Password); err != nil {
+	userSrv := service.NewUserService()
+	if user, err = userSrv.Login(login); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	principal := middleware.Principal{
-		ID:         account.ID.String(),
-		Name:       account.User.Name,
+		ID:         user.ID.String(),
+		Name:       user.Name,
 		ExpireDays: 7,
 	}
+
 	if err := principal.CreateToken(); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return

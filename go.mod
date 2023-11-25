@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/go-oauth2/oauth2/v4 v4.5.2
 	github.com/go-session/session/v3 v3.2.1
+	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.1
 	github.com/gorilla/context v1.1.1
@@ -15,15 +16,12 @@ require (
 	github.com/vgarvardt/go-oauth2-pg/v4 v4.4.3
 	github.com/vgarvardt/go-pg-adapter v1.0.0
 	golang.org/x/crypto v0.9.0
-	gorm.io/datatypes v1.2.0
 	gorm.io/driver/postgres v1.5.3
 	gorm.io/gorm v1.25.5
 )
 
 require (
 	github.com/bytedance/gopkg v0.0.0-20221122125632-68358b8ecec6 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/golang-jwt/jwt v3.2.1+incompatible // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -38,5 +36,4 @@ require (
 	github.com/jmoiron/sqlx v1.3.4 // indirect
 	github.com/vgarvardt/pgx-helpers/v4 v4.0.0-20200225100150-876aee3d1a22 // indirect
 	golang.org/x/text v0.9.0 // indirect
-	gorm.io/driver/mysql v1.4.7 // indirect
 )

@@ -10,7 +10,7 @@
       </a-form-item>
 
       <a-form-item label="Username" name="username">
-        <a-input v-model:value="registerFormState.username" />
+        <a-input v-model:value="registerFormState.user_name" />
       </a-form-item>
 
       <a-form-item label="Phone" name="phone">
@@ -44,7 +44,7 @@ const wrapperCol = { span: 14 };
 
 interface RegisterFormState {
   name: string;
-  username: string;
+  user_name: string;
   email: string;
   phone: string;
   password: string;
@@ -52,7 +52,7 @@ interface RegisterFormState {
 
 const registerFormState = reactive<RegisterFormState>({
   name: "",
-  username: "",
+  user_name: "",
   email: "",
   phone: "",
   password: "",
