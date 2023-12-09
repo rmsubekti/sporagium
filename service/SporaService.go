@@ -16,6 +16,7 @@ type SporaServiceInteface interface {
 	FindByUserID(userID string) (spora []models.Spora, err error)
 	Create(spora *models.Spora, userID string) (err error)
 	Update(spora *models.Spora, ID string) (err error)
+	Delete(spora *models.Spora) (err error)
 	Paginate(paginator *helper.Paginator, userID string) (err error)
 }
 
@@ -28,6 +29,9 @@ func NewSporaService() SporaServiceInteface {
 func (s sporaService) FirstByID(id string) (spora models.Spora, err error) {
 	return s.repo.First("id = ?", id)
 }
+func (s sporaService) Delete(spora *models.Spora) (err error) {
+	return s.repo.Delete(spora)
+}
 func (s sporaService) FindByUserID(userID string) (spora []models.Spora, err error) {
 	return s.repo.Find("user_id = ?", userID)
 }
@@ -36,6 +40,7 @@ func (s sporaService) Create(spora *models.Spora, userID string) (err error) {
 		return
 	}
 	spora.UserID = uuid.MustParse(userID)
+	spora.ID = uuid.New()
 	return s.repo.Create(spora)
 }
 func (s sporaService) Update(spora *models.Spora, ID string) (err error) {

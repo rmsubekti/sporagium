@@ -81,7 +81,7 @@ func Setup(r *mux.Router) {
 
 }
 func authHandler(w http.ResponseWriter, r *http.Request) {
-	store, err := session.Start(context.TODO(), w, r)
+	store, err := session.Start(nil, w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

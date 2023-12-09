@@ -14,7 +14,7 @@ type SecretServiceInterface interface {
 	FirstByID(id string) (secret models.Secret, err error)
 	FindByUserID(userID string) (secret []models.Secret, err error)
 	Generate(sporaID uuid.UUID) (err error)
-	Delete(ID uint) (err error)
+	Delete(sporaID string, secretID int) (err error)
 }
 
 func NewSecretService() SecretServiceInterface {
@@ -36,6 +36,9 @@ func (s secretService) Generate(sporaID uuid.UUID) (err error) {
 	return s.repo.Create(&secret)
 }
 
-func (s secretService) Delete(ID uint) (err error) {
-	return s.repo.Delete(&models.Secret{ID: ID})
+func (s secretService) Delete(sporaID string, secretID int) (err error) {
+	return s.repo.Delete(&models.Secret{
+		ID:      uint(secretID),
+		SporaID: uuid.MustParse(sporaID),
+	})
 }

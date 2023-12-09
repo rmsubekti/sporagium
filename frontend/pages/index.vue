@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <h1>Welcome to the homepage</h1>
-    <AppAlert>
-      This is an auto-imported component
-    </AppAlert>
-  </div>
+  <Head>
+      <title>Sporagium</title>
+  </Head>
+  <NuxtLayout name="one">
+      Index
+  </NuxtLayout>
 </template>
+<script setup lang="ts">
+</script>

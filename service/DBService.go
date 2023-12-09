@@ -21,6 +21,7 @@ func init() {
 	`)
 
 	db.AutoMigrate(
+		&models.Account{},
 		&models.User{},
 		&models.Spora{},
 		&models.Secret{},

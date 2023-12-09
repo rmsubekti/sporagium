@@ -31,7 +31,6 @@
             </a-form-item> -->
 {{ name }}
             <a href="/o/authorize">Authorize</a>
-
     </NuxtLayout>
 </template>
 <script lang="ts" setup>

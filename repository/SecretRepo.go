@@ -13,8 +13,8 @@ type SecretRepo struct {
 type SecretRepoInterface interface {
 	Find(cond ...any) (rows []models.Secret, err error)
 	First(cond ...any) (Secret models.Secret, err error)
-	Create(Secret *models.Secret) (err error)
-	Delete(Secret *models.Secret) (err error)
+	Create(secret *models.Secret) (err error)
+	Delete(secret *models.Secret) (err error)
 }
 
 func NewSecretRepo(db *gorm.DB) SecretRepoInterface {
@@ -28,8 +28,8 @@ func (sR SecretRepo) Find(cond ...any) (rows []models.Secret, err error) {
 	return
 }
 
-func (sR SecretRepo) First(cond ...any) (Secret models.Secret, err error) {
-	err = sR.DB.Preload(clause.Associations).First(&Secret, cond...).Error
+func (sR SecretRepo) First(cond ...any) (secret models.Secret, err error) {
+	err = sR.DB.Preload(clause.Associations).First(&secret, cond...).Error
 	return
 }
 

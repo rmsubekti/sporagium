@@ -2,7 +2,7 @@
     <Head>
         <title>User</title>
     </Head>
-    <NuxtLayout name="dashboard">
-        User Dashboard
+    <NuxtLayout name="one">
+        User page
     </NuxtLayout>
 </template>

@@ -14,27 +14,27 @@ import (
 
 func (v V1Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var (
-		user models.User
+		reg dto.Register
 	)
-	userSrv := service.NewUserService()
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	accountSrv := service.NewAccountService()
+	if err := json.NewDecoder(r.Body).Decode(&reg); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	if err := userSrv.Register(&user); err != nil {
+	account := reg.GetAccount()
+	if err := accountSrv.Register(&account); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	user.Password = ""
-	dto.JSON(w, http.StatusOK, user)
+	account.Password = ""
+	dto.JSON(w, http.StatusOK, account.User)
 }
 
 func (v V1Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var (
-		login dto.Login
-		user  models.User
-		err   error
+		login   dto.Login
+		account models.Account
+		err     error
 	)
 	store, _ := session.Start(r.Context(), w, r)
 	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
@@ -42,15 +42,15 @@ func (v V1Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userSrv := service.NewUserService()
-	if user, err = userSrv.Login(login); err != nil {
+	accountSrv := service.NewAccountService()
+	if account, err = accountSrv.Login(login); err != nil {
 		dto.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	principal := middleware.Principal{
-		ID:         user.ID.String(),
-		Name:       user.Name,
+		ID:         account.ID.String(),
+		Name:       account.User.Name,
 		ExpireDays: 7,
 	}
 

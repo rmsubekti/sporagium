@@ -14,9 +14,9 @@ type SporaRepo struct {
 type SporaRepoInterface interface {
 	Find(cond ...any) (rows []models.Spora, err error)
 	First(cond ...any) (Spora models.Spora, err error)
-	Create(Spora *models.Spora) (err error)
-	Delete(Spora *models.Spora) (err error)
-	Update(Spora *models.Spora) (err error)
+	Create(spora *models.Spora) (err error)
+	Delete(spora *models.Spora) (err error)
+	Update(spora *models.Spora) (err error)
 	Paginate(paginator *helper.Paginator, userID string) (err error)
 }
 

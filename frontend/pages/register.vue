@@ -9,7 +9,7 @@
         <a-input v-model:value="registerFormState.name" />
       </a-form-item>
 
-      <a-form-item label="Username" name="username">
+      <a-form-item label="Username" name="user_name">
         <a-input v-model:value="registerFormState.user_name" />
       </a-form-item>
 

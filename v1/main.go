@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"net/http"
+
 	"github.com/rmsubekti/sporagium/middleware"
 	"github.com/rmsubekti/sporagium/v1/handler"
 
@@ -32,7 +34,9 @@ func Setup(r *mux.Router) {
 	spora.Use(middleware.JwtAuthMiddleware)
 	{
 		spora.HandleFunc("", h.CreateSpora).Methods("POST")
-		spora.HandleFunc("/{id}", h.GenerateSecret).Methods("PATCH")
+		spora.HandleFunc("/{id}", h.GenerateSecret).Methods(http.MethodPatch)
+		spora.HandleFunc("/{id}", h.DeleteSpora).Methods(http.MethodDelete)
+		spora.HandleFunc("/{id}/sid/{sid}", h.DeleteSecret).Methods(http.MethodDelete)
 		spora.HandleFunc("", h.ViewListSpora).Methods("GET")
 	}
 }

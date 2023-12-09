@@ -62,7 +62,7 @@ const onFinish = async (values: any) => {
         onResponse({ response }) {
             if (response.status === 200) {
                 localStorage.setItem('nuxt-cred', response._data.data.token);
-                navigateTo('/dashboard')
+                navigateTo('/')
             }else if(response.status === 307 )(
                 navigateTo(response._data.data)
             )

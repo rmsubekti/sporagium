@@ -1,7 +1,7 @@
 <template>
     <div>
-        <a-button type="primary" @click="showModal">Open Modal</a-button>
-        <a-modal v-model:open="open" title="Basic Modal">
+        <a-button type="primary" class="bg-sky-700" @click="showModal">New App</a-button>
+        <a-modal v-model:open="open" title="Create New App">
             <a-form :model="sporaFormState" :label-col="labelCol" :wrapper-col="wrapperCol" @finish="onFinish"
                 @finishFailed="onFinishFailed">
                 <a-form-item label="Application name">
