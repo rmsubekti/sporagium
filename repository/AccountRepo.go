@@ -28,7 +28,7 @@ func (uR AccountRepo) Find(cond ...any) (rows []models.Account, err error) {
 }
 
 func (uR AccountRepo) First(cond ...any) (account models.Account, err error) {
-	err = uR.DB.First(&account, cond...).Error
+	err = uR.DB.Preload(clause.Associations).First(&account, cond...).Error
 	return
 }
 

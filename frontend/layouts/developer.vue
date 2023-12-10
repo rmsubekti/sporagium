@@ -1,32 +1,6 @@
 <template>
     <a-layout class="min-h-screen">
-        <a-layout-header style="background-color:rgb(164, 177, 255)adding: 0;padding: 0 20px;">
-            <div class="flex max-w-7xl align-middle justify-between h-full" style="margin: 0 auto;">
-                <div></div>
-                <a-dropdown-button :trigger="['click']" style="display: inline;">
-                    Dropdown
-                    <template #overlay>
-                        <a-menu @click="">
-                            <a-menu-item key="1">
-                                <UserOutlined />
-                                1st menu item
-                            </a-menu-item>
-                            <a-menu-item key="2">
-                                <UserOutlined />
-                                2nd menu item
-                            </a-menu-item>
-                            <a-menu-item key="3">
-                                <UserOutlined />
-                                3rd item
-                            </a-menu-item>
-                        </a-menu>
-                    </template>
-                    <template #icon>
-                        <UserOutlined />
-                    </template>
-                </a-dropdown-button>
-            </div>
-        </a-layout-header>
+        <Header></Header>
         <a-layout-content class="flex justify-between max-w-7xl w-full min-h-max text-slate-950  bg-white" style="margin: 25px  auto;">
             <a-menu v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" class="" style="width: 216px;"
                 mode="inline" :items="items" @click="handleClick" />
