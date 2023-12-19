@@ -16,7 +16,7 @@ require (
 	github.com/rs/cors v1.10.1
 	github.com/vgarvardt/go-oauth2-pg/v4 v4.4.3
 	github.com/vgarvardt/go-pg-adapter v1.0.0
-	golang.org/x/crypto v0.9.0
+	golang.org/x/crypto v0.17.0
 	gorm.io/driver/postgres v1.5.3
 	gorm.io/gorm v1.25.5
 )
@@ -36,5 +36,5 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmoiron/sqlx v1.3.4 // indirect
 	github.com/vgarvardt/pgx-helpers/v4 v4.0.0-20200225100150-876aee3d1a22 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 )
