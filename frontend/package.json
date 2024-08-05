@@ -13,7 +13,7 @@
     "@ant-design-vue/nuxt": "^1.1.1",
     "@nuxt/devtools": "latest",
     "nuxi": "^3.9.0",
-    "nuxt": "^3.7.4",
+    "nuxt": "^3.12.4",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
